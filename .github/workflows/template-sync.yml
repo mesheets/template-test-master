@@ -1,0 +1,52 @@
+name: Template Synchronizer
+
+# DESCRIPTION:
+#   For respositories created from a template, this provides an automated
+#   mechanism for applying updates that have been made to the source template.
+#   Any detected changes are staged as pull requests.
+#
+#   This workflow is based on AndreasAugustin/actions-template-sync:
+#   - https://github.com/marketplace/actions/actions-template-sync
+#   - https://github.com/AndreasAugustin/actions-template-sync
+#
+# LICENSE:       MIT
+# LICENSE URLs:
+#   - https://opensource.org/license/mit
+#   - https://tlo.mit.edu/understand-ip/exploring-mit-open-source-license-comprehensive-guide
+#
+
+
+on:
+  # Enable manual triggering
+  workflow_dispatch:
+
+  # Run on a schedule (cronjob)
+  # Following POSIX cron syntax, run every Saturday at Noon (12:00 PM) UTC
+  #   https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07
+  schedule:
+    - cron: "0 12 * * 6"
+
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+
+    # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+    permissions:
+      contents:      write
+      pull-requests: write
+
+    steps:
+      # To use this repository's private action, you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v4
+        # https://github.com/actions/checkout#usage
+        # uncomment if you use submodules within the repository
+        # with:
+        #   submodules: true
+
+      - name: actions-template-sync
+        uses: AndreasAugustin/actions-template-sync@v2
+        with:
+          source_repo_path: mesheets/template-test-master
+          # upstream_branch: <target_branch> # defaults to main
+          # pr_labels: <label1>,<label2>[,...] # defaults to template_sync
