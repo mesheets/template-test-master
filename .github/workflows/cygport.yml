@@ -110,9 +110,9 @@ jobs:
       matrix:     ${{ fromJson(needs.compose_matrix.outputs.JOB_MATRIX) }}
 
     runs-on:      ${{ matrix.os }}
-    
+
     steps:
-    - name: Get latest from version control
+    - name: Download the repository contents
       uses: actions/download-artifact@v5
       with:
         name: ${{ env.REPO_SNAPSHOT_NAME }}
