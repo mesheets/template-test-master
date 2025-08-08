@@ -11,3 +11,6 @@
 *.tar.xz
 *.tgz
 *.zip
+
+# For testing purposes only
+/dev/null
