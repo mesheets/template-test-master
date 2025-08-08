@@ -92,13 +92,18 @@ jobs:
       # jq -cn --argjson files "$(ls *.cygport | jq --raw-input | jq --slurp --compact-output)" '{file: $files}'
 
     - name: Output the generated package matrix
-      if:   env.JOB_MATRIX != ''
-      run:  echo $JOB_MATRIX | jq --slurp .
+      run:  |
+        if [ -n "$JOB_MATRIX" ] ; then
+          echo $JOB_MATRIX | jq --slurp .
+        else
+          echo -e "WARNING: No files matching the pattern \"$FILE_SEARCH_FILTER\" found."
+        fi
 
 
   generate_package:
     name:     Packaging ${{ matrix.file }} for ${{ matrix.platform }}
     needs:    compose_matrix
+    if:       needs.compose_matrix.outputs.JOB_MATRIX != ''
 
     strategy:
       fail-fast:  false
