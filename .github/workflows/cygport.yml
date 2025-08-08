@@ -73,14 +73,6 @@ jobs:
     - name: Get latest from version control
       uses: actions/checkout@v4
 
-    - name: Post repository contents as an artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.REPO_SNAPSHOT_NAME }}
-        path: "**/*"
-        if-no-files-found:    error
-        include-hidden-files: false
-
     - name: Create the JSON for the Cygport and package matrices
       id:   generate_json_matrix
       if:   ${{ hashFiles(env.FILE_SEARCH_FILTER) != '' }}
@@ -90,6 +82,15 @@ jobs:
         echo "JOB_MATRIX=$JOB_MATRIX"  >>  "$GITHUB_ENV"
         echo "JOB_MATRIX=$JOB_MATRIX"  >>  "$GITHUB_OUTPUT"
       # jq -cn --argjson files "$(ls *.cygport | jq --raw-input | jq --slurp --compact-output)" '{file: $files}'
+
+    - name: Post repository contents as an artifact
+      if:   env.JOB_MATRIX != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.REPO_SNAPSHOT_NAME }}
+        path: "**/*"
+        if-no-files-found:    error
+        include-hidden-files: false
 
     - name: Output the generated package matrix
       run:  |
