@@ -83,14 +83,16 @@ jobs:
 
     - name: Create the JSON for the Cygport and package matrices
       id:   generate_json_matrix
+      if:   ${{ hashFiles(env.FILE_SEARCH_FILTER) != '' }}
       run:  |
         MATRIX_FILE=$(ls $FILE_SEARCH_FILTER | jq --raw-input | jq --slurp --compact-output)
         JOB_MATRIX="{ $MATRIX_OS, $MATRIX_PLATFORM, \"file\": $MATRIX_FILE }"
         echo "JOB_MATRIX=$JOB_MATRIX"  >>  "$GITHUB_ENV"
         echo "JOB_MATRIX=$JOB_MATRIX"  >>  "$GITHUB_OUTPUT"
       # jq -cn --argjson files "$(ls *.cygport | jq --raw-input | jq --slurp --compact-output)" '{file: $files}'
-        
+
     - name: Output the generated package matrix
+      if:   env.JOB_MATRIX != ''
       run:  echo $JOB_MATRIX | jq --slurp .
 
 
