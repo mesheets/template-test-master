@@ -5,7 +5,8 @@ name: Template Synchronizer
 #   mechanism for applying updates that have been made to the source template.
 #   Any detected changes are staged as pull requests.
 #
-#   This workflow is based on AndreasAugustin/actions-template-sync:
+#   This workflow was adapted by Matthew Sheets
+#   from AndreasAugustin/actions-template-sync:
 #   - https://github.com/marketplace/actions/actions-template-sync
 #   - https://github.com/AndreasAugustin/actions-template-sync
 #
@@ -26,18 +27,23 @@ on:
   schedule:
     - cron: "0 12 * * 6"
 
+env:
+  AUTHORIZED_TOKEN: ${{ secrets.CYGPORT_TEMPLATE_SYNC_TOKEN }}
+
 jobs:
-  get-token:
+  is-token-defined:
     runs-on:  ubuntu-latest
     steps:
-      - name: No-op
-        run:  true
+      - name: Check for Token
+        id:   check-for-token
+        if:   env.AUTHORIZED_TOKEN != ''
+        run:  echo "TOKEN_FOUND=true"  >>  "$GITHUB_OUTPUT"
     outputs:
       AUTHORIZED_TOKEN: ${{ secrets.CYGPORT_TEMPLATE_SYNC_TOKEN }}
 
   repo-sync:
-    needs:   get-token
-    if:      needs.get-token.outputs.AUTHORIZED_TOKEN != ''
+    needs:   is-token-defined
+    if:      needs.is-token-defined.outputs.TOKEN_FOUND != ''
     runs-on: ubuntu-latest
 
     # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
