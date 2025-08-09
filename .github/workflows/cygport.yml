@@ -17,7 +17,6 @@ name: Cygport Packager
 #   refer to https://yaml-multiline.info/ for possible options.
 
 
-
 env:
   # Workflow configuration
   FILE_SEARCH_FILTER: "*.cygport"
