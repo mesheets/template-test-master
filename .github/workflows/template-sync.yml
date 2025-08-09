@@ -39,7 +39,7 @@ jobs:
         if:   env.AUTHORIZED_TOKEN != ''
         run:  echo "TOKEN_FOUND=true"  >>  "$GITHUB_OUTPUT"
     outputs:
-      AUTHORIZED_TOKEN: ${{ secrets.CYGPORT_TEMPLATE_SYNC_TOKEN }}
+      TOKEN_FOUND: ${{ steps.check-for-token.outputs.TOKEN_FOUND }}
 
   repo-sync:
     needs:   is-token-defined
