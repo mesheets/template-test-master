@@ -26,12 +26,18 @@ on:
   schedule:
     - cron: "0 12 * * 6"
 
-env:
-  AUTHORIZED_TOKEN: ${{ secrets.CYGPORT_TEMPLATE_SYNC_TOKEN }}
-
 jobs:
+  get-token:
+    runs-on:  ubuntu-latest
+    steps:
+      - name: No-op
+        run:  true
+    outputs:
+      AUTHORIZED_TOKEN: ${{ secrets.CYGPORT_TEMPLATE_SYNC_TOKEN }}
+
   repo-sync:
-    if:      env.AUTHORIZED_TOKEN != ''
+    needs:   get-token
+    if:      needs.get-token.outputs.AUTHORIZED_TOKEN != ''
     runs-on: ubuntu-latest
 
     # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
