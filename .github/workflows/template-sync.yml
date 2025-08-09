@@ -48,7 +48,6 @@ jobs:
 
     # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
     permissions:
-      actions:       write
       contents:      write
       pull-requests: write
 
@@ -56,15 +55,17 @@ jobs:
       # To use this repository's private action, you must check out the repository
       - name: Checkout
         uses: actions/checkout@v4
-        # https://github.com/actions/checkout#usage
-        # uncomment if you use submodules within the repository
-        # with:
-        #   submodules: true
+        with:
+          persist-credentials: false
+          # https://github.com/actions/checkout#usage
+          # uncomment if you use submodules within the repository
+          # submodules: true
 
       - name: actions-template-sync
         uses: AndreasAugustin/actions-template-sync@v2
         with:
-          target_gh_token:  ${{ env.AUTHORIZED_TOKEN }}
+          source_gh_token: ${{ secrets.GITHUB_TOKEN }}
+          target_gh_token:  ${{ secrets.CYGPORT_TEMPLATE_SYNC_TOKEN }}
           source_repo_path: mesheets/template-test-master
           # upstream_branch: <target_branch> # defaults to main
           # pr_labels: <label1>,<label2>[,...] # defaults to template_sync
